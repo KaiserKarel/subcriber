@@ -1,0 +1,809 @@
+{
+  "metadataVersion": "0.1.0",
+  "source": {
+    "hash": "0x4d08328327f8d9c60edf08b61493000acd579bb0f68d2546377f34971d163aed",
+    "language": "ink! 3.0.0-rc3",
+    "compiler": "rustc 1.53.0-nightly"
+  },
+  "contract": {
+    "name": "subscription",
+    "version": "0.1.0",
+    "authors": [
+      "[your_name] <[your_email]>"
+    ]
+  },
+  "spec": {
+    "constructors": [
+      {
+        "args": [
+          {
+            "name": "erc20_address",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 1
+            }
+          },
+          {
+            "name": "subscription_max_age",
+            "type": {
+              "displayName": [
+                "Timestamp"
+              ],
+              "type": 11
+            }
+          }
+        ],
+        "docs": [],
+        "name": [
+          "new"
+        ],
+        "selector": "0x9bae9d5e"
+      }
+    ],
+    "docs": [],
+    "events": [
+      {
+        "args": [
+          {
+            "docs": [],
+            "indexed": true,
+            "name": "account",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 1
+            }
+          },
+          {
+            "docs": [],
+            "indexed": false,
+            "name": "subscription",
+            "type": {
+              "displayName": [
+                "Subscription"
+              ],
+              "type": 9
+            }
+          }
+        ],
+        "docs": [
+          " Subscription events are emitted after each purchased subscription, containing the new",
+          " state."
+        ],
+        "name": "SubscriptionEvent"
+      },
+      {
+        "args": [
+          {
+            "docs": [],
+            "indexed": true,
+            "name": "account",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 1
+            }
+          },
+          {
+            "docs": [],
+            "indexed": false,
+            "name": "remaining",
+            "type": {
+              "displayName": [
+                "u128"
+              ],
+              "type": 10
+            }
+          },
+          {
+            "docs": [],
+            "indexed": false,
+            "name": "consumed",
+            "type": {
+              "displayName": [
+                "u128"
+              ],
+              "type": 10
+            }
+          }
+        ],
+        "docs": [
+          " Consumption events are emitted after each media consumption, containing the remaining and",
+          " consumed hours."
+        ],
+        "name": "ConsumptionEvent"
+      }
+    ],
+    "messages": [
+      {
+        "args": [
+          {
+            "name": "account",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 1
+            }
+          },
+          {
+            "name": "num_months",
+            "type": {
+              "displayName": [
+                "u128"
+              ],
+              "type": 10
+            }
+          }
+        ],
+        "docs": [
+          " Purchases `num_months` of subscription for `account`. If the account already has a",
+          " subscription, no extra hours are purchased, but instead more months are added. Note",
+          " that hours do not roll over, but are reset after each month."
+        ],
+        "mutates": true,
+        "name": [
+          "subscribe_n"
+        ],
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "Result"
+          ],
+          "type": 12
+        },
+        "selector": "0xf13a4579"
+      },
+      {
+        "args": [
+          {
+            "name": "account",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 1
+            }
+          }
+        ],
+        "docs": [
+          " Obtains the subscription info for the provided account."
+        ],
+        "mutates": false,
+        "name": [
+          "subscription_info"
+        ],
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "Subscription"
+          ],
+          "type": 9
+        },
+        "selector": "0x79a3e721"
+      },
+      {
+        "args": [
+          {
+            "name": "account",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 1
+            }
+          },
+          {
+            "name": "hours",
+            "type": {
+              "displayName": [
+                "u128"
+              ],
+              "type": 10
+            }
+          }
+        ],
+        "docs": [
+          " Reduce the number of media hours left for account. If a month has passed since last",
+          " purchase, hours are reset, or newly allocated if the user has paid for multiple months.",
+          "",
+          " # Restrictions",
+          "",
+          " May only be called by the contract owner."
+        ],
+        "mutates": true,
+        "name": [
+          "consume"
+        ],
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "Result"
+          ],
+          "type": 15
+        },
+        "selector": "0x1f6a6a9a"
+      },
+      {
+        "args": [
+          {
+            "name": "account",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 1
+            }
+          },
+          {
+            "name": "amount",
+            "type": {
+              "displayName": [
+                "Balance"
+              ],
+              "type": 10
+            }
+          }
+        ],
+        "docs": [
+          " Transfers funds from the token wallet to the provided account",
+          "",
+          " # Restrictions",
+          "",
+          " May only be called by the contract owner."
+        ],
+        "mutates": true,
+        "name": [
+          "transfer_out"
+        ],
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "Result"
+          ],
+          "type": 18
+        },
+        "selector": "0x269070c5"
+      }
+    ]
+  },
+  "storage": {
+    "struct": {
+      "fields": [
+        {
+          "layout": {
+            "cell": {
+              "key": "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "ty": 1
+            }
+          },
+          "name": "owner"
+        },
+        {
+          "layout": {
+            "struct": {
+              "fields": [
+                {
+                  "layout": {
+                    "cell": {
+                      "key": "0x0100000000000000000000000000000000000000000000000000000000000000",
+                      "ty": 1
+                    }
+                  },
+                  "name": "account_id"
+                }
+              ]
+            }
+          },
+          "name": "token"
+        },
+        {
+          "layout": {
+            "struct": {
+              "fields": [
+                {
+                  "layout": {
+                    "struct": {
+                      "fields": [
+                        {
+                          "layout": {
+                            "cell": {
+                              "key": "0x0200000000000000000000000000000000000000000000000000000000000000",
+                              "ty": 4
+                            }
+                          },
+                          "name": "header"
+                        },
+                        {
+                          "layout": {
+                            "struct": {
+                              "fields": [
+                                {
+                                  "layout": {
+                                    "cell": {
+                                      "key": "0x0300000000000000000000000000000000000000000000000000000000000000",
+                                      "ty": 5
+                                    }
+                                  },
+                                  "name": "len"
+                                },
+                                {
+                                  "layout": {
+                                    "array": {
+                                      "cellsPerElem": 1,
+                                      "layout": {
+                                        "cell": {
+                                          "key": "0x0300000001000000000000000000000000000000000000000000000000000000",
+                                          "ty": 6
+                                        }
+                                      },
+                                      "len": 4294967295,
+                                      "offset": "0x0400000000000000000000000000000000000000000000000000000000000000"
+                                    }
+                                  },
+                                  "name": "elems"
+                                }
+                              ]
+                            }
+                          },
+                          "name": "entries"
+                        }
+                      ]
+                    }
+                  },
+                  "name": "keys"
+                },
+                {
+                  "layout": {
+                    "hash": {
+                      "layout": {
+                        "cell": {
+                          "key": "0x0400000001000000000000000000000000000000000000000000000000000000",
+                          "ty": 8
+                        }
+                      },
+                      "offset": "0x0300000001000000000000000000000000000000000000000000000000000000",
+                      "strategy": {
+                        "hasher": "Blake2x256",
+                        "postfix": "",
+                        "prefix": "0x696e6b20686173686d6170"
+                      }
+                    }
+                  },
+                  "name": "values"
+                }
+              ]
+            }
+          },
+          "name": "subscriptions"
+        },
+        {
+          "layout": {
+            "cell": {
+              "key": "0x0400000001000000000000000000000000000000000000000000000000000000",
+              "ty": 11
+            }
+          },
+          "name": "subscription_max_age"
+        }
+      ]
+    }
+  },
+  "types": [
+    {
+      "def": {
+        "composite": {
+          "fields": [
+            {
+              "type": 2,
+              "typeName": "[u8; 32]"
+            }
+          ]
+        }
+      },
+      "path": [
+        "ink_env",
+        "types",
+        "AccountId"
+      ]
+    },
+    {
+      "def": {
+        "array": {
+          "len": 32,
+          "type": 3
+        }
+      }
+    },
+    {
+      "def": {
+        "primitive": "u8"
+      }
+    },
+    {
+      "def": {
+        "composite": {
+          "fields": [
+            {
+              "name": "last_vacant",
+              "type": 5,
+              "typeName": "Index"
+            },
+            {
+              "name": "len",
+              "type": 5,
+              "typeName": "u32"
+            },
+            {
+              "name": "len_entries",
+              "type": 5,
+              "typeName": "u32"
+            }
+          ]
+        }
+      },
+      "path": [
+        "ink_storage",
+        "collections",
+        "stash",
+        "Header"
+      ]
+    },
+    {
+      "def": {
+        "primitive": "u32"
+      }
+    },
+    {
+      "def": {
+        "variant": {
+          "variants": [
+            {
+              "fields": [
+                {
+                  "type": 7,
+                  "typeName": "VacantEntry"
+                }
+              ],
+              "name": "Vacant"
+            },
+            {
+              "fields": [
+                {
+                  "type": 1,
+                  "typeName": "T"
+                }
+              ],
+              "name": "Occupied"
+            }
+          ]
+        }
+      },
+      "params": [
+        1
+      ],
+      "path": [
+        "ink_storage",
+        "collections",
+        "stash",
+        "Entry"
+      ]
+    },
+    {
+      "def": {
+        "composite": {
+          "fields": [
+            {
+              "name": "next",
+              "type": 5,
+              "typeName": "Index"
+            },
+            {
+              "name": "prev",
+              "type": 5,
+              "typeName": "Index"
+            }
+          ]
+        }
+      },
+      "path": [
+        "ink_storage",
+        "collections",
+        "stash",
+        "VacantEntry"
+      ]
+    },
+    {
+      "def": {
+        "composite": {
+          "fields": [
+            {
+              "name": "value",
+              "type": 9,
+              "typeName": "V"
+            },
+            {
+              "name": "key_index",
+              "type": 5,
+              "typeName": "KeyIndex"
+            }
+          ]
+        }
+      },
+      "params": [
+        9
+      ],
+      "path": [
+        "ink_storage",
+        "collections",
+        "hashmap",
+        "ValueEntry"
+      ]
+    },
+    {
+      "def": {
+        "composite": {
+          "fields": [
+            {
+              "name": "hours",
+              "type": 10,
+              "typeName": "u128"
+            },
+            {
+              "name": "months_payed",
+              "type": 10,
+              "typeName": "u128"
+            },
+            {
+              "name": "timestamp",
+              "type": 11,
+              "typeName": "Timestamp"
+            }
+          ]
+        }
+      },
+      "path": [
+        "subscription",
+        "subscription",
+        "Subscription"
+      ]
+    },
+    {
+      "def": {
+        "primitive": "u128"
+      }
+    },
+    {
+      "def": {
+        "primitive": "u64"
+      }
+    },
+    {
+      "def": {
+        "variant": {
+          "variants": [
+            {
+              "fields": [
+                {
+                  "type": 10,
+                  "typeName": "T"
+                }
+              ],
+              "name": "Ok"
+            },
+            {
+              "fields": [
+                {
+                  "type": 13,
+                  "typeName": "E"
+                }
+              ],
+              "name": "Err"
+            }
+          ]
+        }
+      },
+      "params": [
+        10,
+        13
+      ],
+      "path": [
+        "Result"
+      ]
+    },
+    {
+      "def": {
+        "variant": {
+          "variants": [
+            {
+              "fields": [
+                {
+                  "type": 14,
+                  "typeName": "privi::Error"
+                }
+              ],
+              "name": "Erc20"
+            },
+            {
+              "name": "InsufficientFunds"
+            }
+          ]
+        }
+      },
+      "path": [
+        "subscription",
+        "subscription",
+        "SubscribeError"
+      ]
+    },
+    {
+      "def": {
+        "variant": {
+          "variants": [
+            {
+              "discriminant": 0,
+              "name": "InsufficientBalance"
+            },
+            {
+              "discriminant": 1,
+              "name": "InsufficientAllowance"
+            }
+          ]
+        }
+      },
+      "path": [
+        "privi",
+        "privi",
+        "Error"
+      ]
+    },
+    {
+      "def": {
+        "variant": {
+          "variants": [
+            {
+              "fields": [
+                {
+                  "type": 9,
+                  "typeName": "T"
+                }
+              ],
+              "name": "Ok"
+            },
+            {
+              "fields": [
+                {
+                  "type": 16,
+                  "typeName": "E"
+                }
+              ],
+              "name": "Err"
+            }
+          ]
+        }
+      },
+      "params": [
+        9,
+        16
+      ],
+      "path": [
+        "Result"
+      ]
+    },
+    {
+      "def": {
+        "variant": {
+          "variants": [
+            {
+              "fields": [
+                {
+                  "type": 17,
+                  "typeName": "AuthError"
+                }
+              ],
+              "name": "AuthError"
+            },
+            {
+              "name": "InsufficientHours"
+            }
+          ]
+        }
+      },
+      "path": [
+        "subscription",
+        "subscription",
+        "ConsumeHoursError"
+      ]
+    },
+    {
+      "def": {
+        "variant": {
+          "variants": [
+            {
+              "discriminant": 0,
+              "name": "IsNotOwner"
+            }
+          ]
+        }
+      },
+      "path": [
+        "subscription",
+        "subscription",
+        "AuthError"
+      ]
+    },
+    {
+      "def": {
+        "variant": {
+          "variants": [
+            {
+              "fields": [
+                {
+                  "type": 19,
+                  "typeName": "T"
+                }
+              ],
+              "name": "Ok"
+            },
+            {
+              "fields": [
+                {
+                  "type": 20,
+                  "typeName": "E"
+                }
+              ],
+              "name": "Err"
+            }
+          ]
+        }
+      },
+      "params": [
+        19,
+        20
+      ],
+      "path": [
+        "Result"
+      ]
+    },
+    {
+      "def": {
+        "tuple": []
+      }
+    },
+    {
+      "def": {
+        "variant": {
+          "variants": [
+            {
+              "fields": [
+                {
+                  "type": 14,
+                  "typeName": "privi::Error"
+                }
+              ],
+              "name": "Erc20"
+            },
+            {
+              "fields": [
+                {
+                  "type": 17,
+                  "typeName": "AuthError"
+                }
+              ],
+              "name": "AuthError"
+            }
+          ]
+        }
+      },
+      "path": [
+        "subscription",
+        "subscription",
+        "TransferError"
+      ]
+    }
+  ]
+}

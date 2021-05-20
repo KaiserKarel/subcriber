@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "contracts/privi",
+    "contracts/subscription",
+]
+
+[profile.release]
+debug = true
